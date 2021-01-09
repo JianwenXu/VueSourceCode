@@ -3,6 +3,7 @@
 
 <head>
     <title>Vue源码剖析</title>
+    <!-- 啥都没加就是 umd 格式 -->
     <script src="../../dist/vue.js"></script>
 </head>
 
@@ -12,17 +13,21 @@
         <p>{{foo}}</p>
         
     </div>
+    <div id="test"></div>
     <script>
         // render > template > el
         // 创建实例
+        
+        // 如果这些都放开会执行 render ,它的优先级最高
         const app = new Vue({
             el: '#demo',
-            // template: '<div>template</div>',
+            // template 有以下两种写法
+            template: '<div>template</div>',
             // template: '#app',
             // render(h){return h('div','render')},
             data:{foo:'foo'}
         })
-        console.log(app.$options.render);
+        console.log(app.$options);
         
     </script>
 </body>

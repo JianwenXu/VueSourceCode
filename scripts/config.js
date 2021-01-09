@@ -35,6 +35,7 @@ const resolve = p => {
   }
 }
 
+// 创建目标配置
 const builds = {
   // Runtime only (CommonJS). Used by bundlers e.g. Webpack & Browserify
   'web-runtime-cjs-dev': {

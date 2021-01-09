@@ -13,6 +13,7 @@ import { extend, mergeOptions, formatComponentName } from '../util/index'
 let uid = 0
 
 export function initMixin (Vue: Class<Component>) {
+  // 原型方法
   Vue.prototype._init = function (options?: Object) {
     const vm: Component = this
     // a uid
@@ -29,6 +30,7 @@ export function initMixin (Vue: Class<Component>) {
     // a flag to avoid this being observed
     vm._isVue = true
     // merge options
+    // 1. 合并选项： new Vue 的时候传入的是用户配置选项，他们需要和系统的配置合并
     if (options && options._isComponent) {
       // optimize internal component instantiation
       // since dynamic options merging is pretty slow, and none of the
@@ -48,14 +50,16 @@ export function initMixin (Vue: Class<Component>) {
       vm._renderProxy = vm
     }
     // expose real self
+    // 2. 把当前组件实例的一些属性初始化，把内部的状态进行响应式处理
     vm._self = vm
-    initLifecycle(vm)
-    initEvents(vm)
-    initRender(vm)
+    initLifecycle(vm) // 实例属性初始化 $parent, $root, $children, $refs
+    initEvents(vm) // 自定义事件的处理
+    initRender(vm) // $slots, $scopeSlots createElement
     callHook(vm, 'beforeCreate')
-    initInjections(vm) // resolve injections before data/props
-    initState(vm)
-    initProvide(vm) // resolve provide after data/props
+    // 接下来都是和组件状态相关的数据操作
+    initInjections(vm) // 注入祖辈传递下来的数据， 1，3开发中用的少，写插件什么的可以用上
+    initState(vm) // 数据响应式 props methods data, computed, watch
+    initProvide(vm) // 提供给后代，用来隔代传参
     callHook(vm, 'created')
 
     /* istanbul ignore if */
@@ -65,6 +69,7 @@ export function initMixin (Vue: Class<Component>) {
       measure(`vue ${vm._name} init`, startTag, endTag)
     }
 
+    // 如果设置了 el 可以自动的执行 $mount
     if (vm.$options.el) {
       vm.$mount(vm.$options.el)
     }
