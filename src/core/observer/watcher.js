@@ -44,10 +44,10 @@ export default class Watcher {
 
   constructor (
     vm: Component,
-    expOrFn: string | Function,
+    expOrFn: string | Function, // updateComponent
     cb: Function,
-    options?: ?Object,
-    isRenderWatcher?: boolean
+    options?: ?Object, // { before()} 生命周期钩子
+    isRenderWatcher?: boolean // true
   ) {
     this.vm = vm
     if (isRenderWatcher) {
