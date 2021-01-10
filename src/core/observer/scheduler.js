@@ -72,6 +72,7 @@ if (inBrowser && !isIE) {
 
 /**
  * Flush both queues and run the watchers.
+ * 刷新某一个 watcher
  */
 function flushSchedulerQueue () {
   currentFlushTimestamp = getNow()

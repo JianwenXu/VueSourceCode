@@ -19,8 +19,15 @@
   * 初始化
 7. src/core/instance/lifecycle.js
   * mountComponent: updateComponent =>  new Watcher() => updateComponent() => render() => update() => patch()
-
 ## 其他
+
+1. 更新流程： data.foo -> defineReactive set -> dep.notify -> queueWatcher -> nextTick(fsq) -> fcq -> fsq() -> watcher.run() -> this.getter(mountCompouent updateComponent) => _render => _update => patch
+
+其中 mountComponent, _update 在 lifecycle 里
+_render 在 render.js 里
+patch, createElm 在 patch.js 里
+
+2. 三个孩子 换行是 undefined
 
 ## 问题
 
@@ -28,3 +35,5 @@
 2. patch 要看一下的
 3. 没有编译器，el 和 template 都不能写？试一下
 4. callHook
+
+

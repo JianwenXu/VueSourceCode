@@ -180,9 +180,11 @@ export default class Watcher {
   /**
    * Scheduler job interface.
    * Will be called by the scheduler.
+   * 真正执行更新的方法
    */
   run () {
     if (this.active) {
+      // 组件级的 watcher 只执行这个 get()
       const value = this.get()
       if (
         value !== this.value ||
