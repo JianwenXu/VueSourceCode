@@ -17,18 +17,26 @@
             el: '#demo',
             data: { foo: 'ready~~' },
             mounted() {
-                this.foo = Math.random()
-                console.log('1:' + this.foo);
-                this.foo = Math.random()
-                console.log('2:' + this.foo);
-                this.foo = Math.random()
-                console.log('3:' + this.foo);
+                // this.$nextTick(() => {
+                //     // 当前会放到事件循环里面去，但是还没有出发更新，所以打印的是 ready
+                //     console.log('第一次打印 p1.innerHTML:' + p1.innerHTML) // ready
+                // })
+                this.foo = 1
+                // console.log('1:' + this.foo); // 1
+                // this.foo = 2
+                // console.log('2:' + this.foo); // 2
+                // // this.$nextTick(() => {
+                // //     // 这里会是3，在事件循环里面代码执行完之后才会执行
+                // //     console.log('中途手动触发 nextTick p1.innerHTML:' + p1.innerHTML) // 3
+                // // })
+                // this.foo = 3
+                // console.log('3:' + this.foo); // 3
                 // 异步行为，此时内容没变
-                console.log('p1.innerHTML:' + p1.innerHTML)
+                // console.log('同步事件循环里面打印 p1.innerHTML:' + p1.innerHTML) // ready
 
                 this.$nextTick(() => {
                     // 这里才是最新的值
-                    console.log('p1.innerHTML:' + p1.innerHTML)
+                    console.log('最后一次打印 p1.innerHTML:' + p1.innerHTML) // 3
                 })
             }
         });

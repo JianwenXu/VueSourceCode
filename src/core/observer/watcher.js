@@ -103,6 +103,7 @@ export default class Watcher {
     let value
     const vm = this.vm
     try {
+      // 执行更新方法
       value = this.getter.call(vm, vm)
     } catch (e) {
       if (this.user) {
@@ -124,6 +125,7 @@ export default class Watcher {
 
   /**
    * Add a dependency to this directive.
+   * dep 和 watcher 互相添加依赖关系
    */
   addDep (dep: Dep) {
     const id = dep.id
@@ -164,10 +166,13 @@ export default class Watcher {
   update () {
     /* istanbul ignore else */
     if (this.lazy) {
+      // computed 的时候走这个分支
       this.dirty = true
     } else if (this.sync) {
+      // 同步判断
       this.run()
     } else {
+      // 把这个 watcher 入队
       queueWatcher(this)
     }
   }

@@ -10,6 +10,8 @@ export let isUsingMicroTask = false
 const callbacks = []
 let pending = false
 
+// callbacks 里面存的就是 flushSchedulerQueue
+// 这个方法时在一个个的执行 flushSchedulerQueue, 并清空 callbacks
 function flushCallbacks () {
   pending = false
   const copies = callbacks.slice(0)
@@ -39,6 +41,8 @@ let timerFunc
 // completely stops working after triggering a few times... so, if native
 // Promise is available, we will use it:
 /* istanbul ignore next, $flow-disable-line */
+// timerFunc 看看怎么在这个系统上比较优雅的异步执行我们的调用
+// 优先级为 Promise -> MutationObserver -> setImmediate -> setTimeout
 if (typeof Promise !== 'undefined' && isNative(Promise)) {
   const p = Promise.resolve()
   timerFunc = () => {
@@ -72,7 +76,7 @@ if (typeof Promise !== 'undefined' && isNative(Promise)) {
   isUsingMicroTask = true
 } else if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
   // Fallback to setImmediate.
-  // Technically it leverages the (macro) task queue,
+  // Technically it leverages the (macro) task queue, 宏任务
   // but it is still a better choice than setTimeout.
   timerFunc = () => {
     setImmediate(flushCallbacks)
@@ -84,10 +88,12 @@ if (typeof Promise !== 'undefined' && isNative(Promise)) {
   }
 }
 
+// 将那个操作入队并且在合适的时机执行
 export function nextTick (cb?: Function, ctx?: Object) {
   let _resolve
   callbacks.push(() => {
     if (cb) {
+      // 处理可能的错误
       try {
         cb.call(ctx)
       } catch (e) {
@@ -97,8 +103,10 @@ export function nextTick (cb?: Function, ctx?: Object) {
       _resolve(ctx)
     }
   })
+  // 判断当前有没有正在工作的任务
   if (!pending) {
     pending = true
+    // 真正的异步执行
     timerFunc()
   }
   // $flow-disable-line

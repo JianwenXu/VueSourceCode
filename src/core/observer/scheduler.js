@@ -24,6 +24,7 @@ let index = 0
 
 /**
  * Reset the scheduler's state.
+ * 重置状态
  */
 function resetSchedulerState () {
   index = queue.length = activatedChildren.length = 0
@@ -39,9 +40,13 @@ function resetSchedulerState () {
 // if the page has thousands of event listeners. Instead, we take a timestamp
 // every time the scheduler flushes and use that for all event listeners
 // attached during that flush.
+// 异步边缘事件＃6566需要在连接事件侦听器时保存时间戳。
+// 但是，调用performance.now（）会产生性能开销，特别是在页面具有数千个事件侦听器的情况下。 
+// 取而代之的是，每次调度程序刷新时，我们都会使用一个时间戳，并将其用于该刷新期间附加的所有事件侦听器。
 export let currentFlushTimestamp = 0
 
 // Async edge case fix requires storing an event listener's attach timestamp.
+// 异步边缘案例修复需要存储事件侦听器的附加时间戳。
 let getNow: () => number = Date.now
 
 // Determine what event timestamp the browser is using. Annoyingly, the
@@ -163,8 +168,10 @@ function callActivatedHooks (queue) {
  */
 export function queueWatcher (watcher: Watcher) {
   const id = watcher.id
+  // 判断同一个 watcher 只入队一次
   if (has[id] == null) {
     has[id] = true
+    // 判断是否正在刷新？
     if (!flushing) {
       queue.push(watcher)
     } else {
@@ -176,7 +183,7 @@ export function queueWatcher (watcher: Watcher) {
       }
       queue.splice(i + 1, 0, watcher)
     }
-    // queue the flush
+    // 判断是否正在工作，如果没有在工作就可以开工了
     if (!waiting) {
       waiting = true
 
@@ -184,6 +191,7 @@ export function queueWatcher (watcher: Watcher) {
         flushSchedulerQueue()
         return
       }
+      // 异步的执行 flushSchedulerQueue
       nextTick(flushSchedulerQueue)
     }
   }
