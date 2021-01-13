@@ -4,6 +4,7 @@ import config from '../config'
 import { initUse } from './use'
 import { initMixin } from './mixin'
 import { initExtend } from './extend'
+// 原件注册
 import { initAssetRegisters } from './assets'
 import { set, del } from '../observer/index'
 import { ASSET_TYPES } from 'shared/constants'
@@ -58,6 +59,7 @@ export function initGlobalAPI (Vue: GlobalAPI) {
 
   // this is used to identify the "base" constructor to extend all plain-object
   // components with in Weex's multi-instance scenarios.
+  // 在Weex的多实例场景中，它用于标识 _base 构造函数以扩展所有纯对象组件
   Vue.options._base = Vue
 
   extend(Vue.options.components, builtInComponents)
