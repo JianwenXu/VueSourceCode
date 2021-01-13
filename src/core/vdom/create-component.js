@@ -48,6 +48,7 @@ const componentVNodeHooks = {
     } else {
       // 组件实例化
       // 虚拟 dom 会保存一下当前的组件实例：如果当前组件被keep-alive 之后，这个组件可以直接拿出来用
+      // TODO 这块的 child 是 vnode?
       const child = vnode.componentInstance = createComponentInstanceForVnode(
         vnode,
         activeInstance
@@ -195,12 +196,15 @@ export function createComponent (
   }
 
   // install component management hooks onto the placeholder node
-  // 安装组件的管理钩子
+  // 安装组件的管理钩子, 只是安装，还没有执行
   installComponentHooks(data)
 
   // return a placeholder vnode
+  // 返回自定义组件的 vnode
   const name = Ctor.options.name || tag
+  // tag, data, children, text, elm, ns, context, key, componentOptions, componentInstance, parent
   const vnode = new VNode(
+    // tag: vue-component-1-comp
     `vue-component-${Ctor.cid}${name ? `-${name}` : ''}`,
     data, undefined, undefined, undefined, context,
     { Ctor, propsData, listeners, tag, children },
