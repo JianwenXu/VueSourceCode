@@ -16,6 +16,7 @@ import VNode, { createEmptyVNode } from '../vdom/vnode'
 
 import { isUpdatingChildComponent } from './lifecycle'
 
+// 给实例声明一些方法
 export function initRender (vm: Component) {
   vm._vnode = null // the root of the child tree
   vm._staticTrees = null // v-once cached trees
@@ -28,9 +29,16 @@ export function initRender (vm: Component) {
   // so that we get proper render context inside it.
   // args order: tag, data, children, normalizationType, alwaysNormalize
   // internal version is used by render functions compiled from templates
+  // 将createElement fn绑定到此实例
+  // 以便在其中获得正确的渲染上下文。
+  // args顺序：标记，数据，子代，normalizationType，alwaysNormalize
+  // 内部版本由模板编译的渲染函数使用
+  // _c 方法是机器编译的，所以不用设置 alwaysNormalize
   vm._c = (a, b, c, d) => createElement(vm, a, b, c, d, false)
   // normalization is always applied for the public version, used in
   // user-written render functions.
+  // 这个和 c 就是编译器里面的 h
+  // 这个是提供给用户的，所以要做标准化处理
   vm.$createElement = (a, b, c, d) => createElement(vm, a, b, c, d, true)
 
   // $attrs & $listeners are exposed for easier HOC creation.

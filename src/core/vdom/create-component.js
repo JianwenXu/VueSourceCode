@@ -34,20 +34,25 @@ import {
 
 // inline hooks to be invoked on component VNodes during patch
 const componentVNodeHooks = {
+  // 比较关心这个钩子
   init (vnode: VNodeWithData, hydrating: boolean): ?boolean {
     if (
       vnode.componentInstance &&
       !vnode.componentInstance._isDestroyed &&
       vnode.data.keepAlive
     ) {
+      // 当前组价被包裹在 keep-alive 中的处理
       // kept-alive components, treat as a patch
       const mountedNode: any = vnode // work around flow
       componentVNodeHooks.prepatch(mountedNode, mountedNode)
     } else {
+      // 组件实例化
+      // 虚拟 dom 会保存一下当前的组件实例：如果当前组件被keep-alive 之后，这个组件可以直接拿出来用
       const child = vnode.componentInstance = createComponentInstanceForVnode(
         vnode,
         activeInstance
       )
+      // 执行挂载
       child.$mount(hydrating ? vnode.elm : undefined, hydrating)
     }
   },
@@ -126,6 +131,7 @@ export function createComponent (
   }
 
   // async component
+  // 异步组件会生成一个临时的占位符
   let asyncFactory
   if (isUndef(Ctor.cid)) {
     asyncFactory = Ctor
@@ -144,6 +150,7 @@ export function createComponent (
     }
   }
 
+  // 处理自定义组件的各个选项
   data = data || {}
 
   // resolve constructor options in case global mixins are applied after
@@ -151,23 +158,28 @@ export function createComponent (
   resolveConstructorOptions(Ctor)
 
   // transform component v-model data into props & events
+  // v-model 相关
   if (isDef(data.model)) {
     transformModel(Ctor.options, data)
   }
 
   // extract props
+  // 分离 props
   const propsData = extractPropsFromVNodeData(data, Ctor, tag)
 
   // functional component
+  // 函数式组件
   if (isTrue(Ctor.options.functional)) {
     return createFunctionalComponent(Ctor, propsData, data, context, children)
   }
 
   // extract listeners, since these needs to be treated as
   // child component listeners instead of DOM listeners
+  // 提取侦听器，因为这些侦听器需要被视为子组件侦听器，而不是DOM侦听器
   const listeners = data.on
   // replace with listeners with .native modifier
   // so it gets processed during parent component patch.
+  // 用.native修饰符替换为侦听器，以便在父组件补丁期间对其进行处理。
   data.on = data.nativeOn
 
   if (isTrue(Ctor.options.abstract)) {
@@ -183,6 +195,7 @@ export function createComponent (
   }
 
   // install component management hooks onto the placeholder node
+  // 安装组件的管理钩子
   installComponentHooks(data)
 
   // return a placeholder vnode
@@ -227,6 +240,9 @@ export function createComponentInstanceForVnode (
 
 function installComponentHooks (data: VNodeData) {
   const hooks = data.hook || (data.hook = {})
+  // 合并用户和默认的管理钩子
+  // hooksToMerge: [init, prepatch, inserted, destory]
+  // 钩子还能自定义
   for (let i = 0; i < hooksToMerge.length; i++) {
     const key = hooksToMerge[i]
     const existing = hooks[key]
